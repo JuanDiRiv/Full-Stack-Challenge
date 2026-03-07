@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { LogoutButton } from "@/components/logout-button/logout-button";
 import { CreatePostForm } from "@/components/posts/create-post-form/create-post-form";
@@ -16,7 +16,7 @@ export default function PostsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
 
-    async function loadPosts() {
+    const loadPosts = useCallback(async () => {
         setErrorMessage("");
         setIsLoading(true);
 
@@ -34,11 +34,11 @@ export default function PostsPage() {
         } finally {
             setIsLoading(false);
         }
-    }
+    }, []);
 
     useEffect(() => {
         void loadPosts();
-    }, []);
+    }, [loadPosts]);
 
     return (
         <AuthGuard mode="protected">

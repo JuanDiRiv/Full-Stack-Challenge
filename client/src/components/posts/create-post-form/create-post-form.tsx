@@ -18,23 +18,23 @@ export function CreatePostForm({ onCreated }: CreatePostFormProps) {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
-    async function loadSavedUsers() {
-        try {
-            const response = await getSavedUsers();
-            const users = response.data || [];
-            setSavedUsers(users);
-
-            if (users.length > 0 && !authorUserId) {
-                setAuthorUserId(users[0]._id);
-            }
-        } catch {
-            setSavedUsers([]);
-        } finally {
-            setIsLoadingUsers(false);
-        }
-    }
-
     useEffect(() => {
+        async function loadSavedUsers() {
+            try {
+                const response = await getSavedUsers();
+                const users = response.data || [];
+                setSavedUsers(users);
+
+                if (users.length > 0) {
+                    setAuthorUserId(users[0]._id);
+                }
+            } catch {
+                setSavedUsers([]);
+            } finally {
+                setIsLoadingUsers(false);
+            }
+        }
+
         void loadSavedUsers();
     }, []);
 

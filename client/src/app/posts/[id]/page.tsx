@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { LogoutButton } from "@/components/logout-button/logout-button";
 import { EditPostForm } from "@/components/posts/edit-post-form/edit-post-form";
@@ -22,7 +22,7 @@ export default function PostDetailPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
 
-    async function loadPost() {
+    const loadPost = useCallback(async () => {
         setErrorMessage("");
         setIsLoading(true);
 
@@ -40,13 +40,13 @@ export default function PostDetailPage() {
         } finally {
             setIsLoading(false);
         }
-    }
+    }, [postId]);
 
     useEffect(() => {
         if (postId) {
             void loadPost();
         }
-    }, [postId]);
+    }, [postId, loadPost]);
 
     async function handleDeletePost() {
         setDeleteError("");
