@@ -13,6 +13,6 @@ export function errorMiddleware(
   res.status(statusCode).json({
     success: false,
     message: error.message || "Internal server error",
-    ...(env.NODE_ENV === "development" && { stack: error.stack }),
+    // ...(env.NODE_ENV === "development" && { stack: error.stack }),
   });
 }
