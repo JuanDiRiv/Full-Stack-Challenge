@@ -9,6 +9,8 @@ interface Env {
   PORT: string;
   MONGODB_URI: string;
   CORS_ORIGIN: string;
+  REQRES_BASE_URL: string;
+  REQRES_API_KEY?: string;
 }
 
 function getRequiredEnv(key: string): string {
@@ -54,4 +56,6 @@ export const env: Env = {
   PORT: getRequiredEnv("PORT"),
   MONGODB_URI: getRequiredEnv("MONGODB_URI"),
   CORS_ORIGIN: getRequiredEnv("CORS_ORIGIN"),
+  REQRES_BASE_URL: process.env.REQRES_BASE_URL || "https://reqres.in",
+  REQRES_API_KEY: process.env.REQRES_API_KEY,
 };
