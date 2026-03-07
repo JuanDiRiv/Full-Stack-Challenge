@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
-import { LogoutButton } from "@/components/logout-button/logout-button";
 import { CreatePostForm } from "@/components/posts/create-post-form/create-post-form";
 import { PostsList } from "@/components/posts/posts-list/posts-list";
 import { getPosts, getSavedUsers } from "@/lib/api";
@@ -43,7 +42,7 @@ export default function PostsPage() {
     return (
         <AuthGuard mode="protected">
             <section>
-                <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <header className="mb-6">
                     <div>
                         <p className="text-sm text-slate-600">
                             <Link href="/" className="underline-offset-2 hover:underline">
@@ -54,9 +53,10 @@ export default function PostsPage() {
                         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
                             Posts
                         </h1>
+                        <p className="mt-2 text-sm text-slate-600">
+                            Manage local posts and assign authors from saved users.
+                        </p>
                     </div>
-
-                    <LogoutButton />
                 </header>
 
                 <div className="space-y-6">

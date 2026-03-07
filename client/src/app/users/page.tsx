@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
-import { LogoutButton } from "@/components/logout-button/logout-button";
 import { PaginationControls } from "@/components/users/pagination-controls/pagination-controls";
 import { UsersSearch } from "@/components/users/users-search/users-search";
 import { UsersList } from "@/components/users/users-list/users-list";
@@ -68,7 +67,7 @@ export default function UsersPage() {
     return (
         <AuthGuard mode="protected">
             <section>
-                <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <header className="mb-6">
                     <div>
                         <p className="text-sm text-slate-600">
                             <Link href="/" className="underline-offset-2 hover:underline">
@@ -79,9 +78,10 @@ export default function UsersPage() {
                         <h1 className="mt-1 text-3xl font-semibold tracking-tight text-slate-900">
                             Users
                         </h1>
+                        <p className="mt-2 text-sm text-slate-600">
+                            Explore ReqRes users and save selected records locally.
+                        </p>
                     </div>
-
-                    <LogoutButton />
                 </header>
 
                 <div className="space-y-4">

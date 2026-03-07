@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
-import { LogoutButton } from "@/components/logout-button/logout-button";
 import { EditPostForm } from "@/components/posts/edit-post-form/edit-post-form";
 import { deletePost, getPostById, getSavedUsers } from "@/lib/api";
 import type { Post } from "@/types/post";
@@ -73,7 +72,7 @@ export default function PostDetailPage() {
     return (
         <AuthGuard mode="protected">
             <section>
-                <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <header className="mb-6">
                     <div>
                         <p className="text-sm text-slate-600">
                             <Link href="/" className="underline-offset-2 hover:underline">
@@ -88,8 +87,6 @@ export default function PostDetailPage() {
                             Post Details
                         </h1>
                     </div>
-
-                    <LogoutButton />
                 </header>
 
                 {isLoading ? (

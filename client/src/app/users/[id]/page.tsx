@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
-import { LogoutButton } from "@/components/logout-button/logout-button";
 import { SaveUserButton } from "@/components/users/save-user-button/save-user-button";
 import { getSavedUsers, getUserById } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
@@ -59,7 +58,7 @@ export default function UserDetailPage() {
     return (
         <AuthGuard mode="protected">
             <section>
-                <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+                <header className="mb-6">
                     <div>
                         <p className="text-sm text-slate-600">
                             <Link href="/" className="underline-offset-2 hover:underline">
@@ -74,8 +73,6 @@ export default function UserDetailPage() {
                             User Details
                         </h1>
                     </div>
-
-                    <LogoutButton />
                 </header>
 
                 {isLoading ? (
