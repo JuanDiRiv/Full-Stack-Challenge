@@ -1,6 +1,7 @@
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { LogoutButton } from "@/components/logout-button/logout-button";
 import { PlannedAreas } from "@/components/planned-areas/planned-areas";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -17,7 +18,15 @@ export default function Home() {
             </p>
           </div>
 
-          <LogoutButton />
+          <div className="flex items-center gap-2">
+            <Link
+              href="/users"
+              className="rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+            >
+              Go to users
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
 
         <PlannedAreas />

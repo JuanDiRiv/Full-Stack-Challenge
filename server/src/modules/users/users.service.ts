@@ -15,6 +15,14 @@ interface ReqResUserResponse {
   data?: ReqResUser;
 }
 
+interface ReqResUsersListResponse {
+  page: number;
+  per_page: number;
+  total: number;
+  total_pages: number;
+  data: ReqResUser[];
+}
+
 function buildReqResHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -63,6 +71,57 @@ async function fetchReqResUserById(externalId: number): Promise<ReqResUser> {
   }
 
   return responseBody.data;
+}
+
+async function fetchReqResUsersByPage(
+  page: number,
+): Promise<ReqResUsersListResponse> {
+  const baseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
+  let response: Response;
+
+  try {
+    response = await fetch(`${baseUrl}/api/users?page=${page}`, {
+      method: "GET",
+      headers: buildReqResHeaders(),
+    });
+  } catch {
+    throw new HttpError("Unable to fetch users from external API", 502);
+  }
+
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new HttpError("External users request rejected", response.status);
+    }
+
+    throw new HttpError(
+      "Failed to fetch users from external API",
+      response.status || 502,
+    );
+  }
+
+  return (await response.json()) as ReqResUsersListResponse;
+}
+
+export async function listReqResUsers(page: number) {
+  if (!Number.isInteger(page) || page <= 0) {
+    throw new HttpError("Invalid page query parameter", 400);
+  }
+
+  const responseBody = await fetchReqResUsersByPage(page);
+
+  return {
+    users: responseBody.data,
+    page: responseBody.page,
+    totalPages: responseBody.total_pages,
+  };
+}
+
+export async function getReqResUserById(externalId: number) {
+  if (!Number.isInteger(externalId) || externalId <= 0) {
+    throw new HttpError("Invalid user id", 400);
+  }
+
+  return fetchReqResUserById(externalId);
 }
 
 export async function importUserByExternalId(externalId: number) {

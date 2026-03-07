@@ -1,10 +1,52 @@
 import { NextFunction, Request, Response } from "express";
 import { HttpError } from "../../utils/http-error";
 import {
+  getReqResUserById,
   getSavedUserById,
   importUserByExternalId,
+  listReqResUsers,
   listSavedUsers,
 } from "./users.service";
+
+export async function getUsersController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const pageQuery = req.query.page;
+    const page = pageQuery ? Number(pageQuery) : 1;
+
+    const result = await listReqResUsers(page);
+
+    res.status(200).json({
+      success: true,
+      message: "Users retrieved",
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getUserByIdController(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  try {
+    const externalId = Number(req.params.id);
+    const user = await getReqResUserById(externalId);
+
+    res.status(200).json({
+      success: true,
+      message: "User retrieved",
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
 
 export async function importUserController(
   req: Request,
