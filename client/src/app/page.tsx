@@ -1,17 +1,29 @@
+import { AuthGuard } from "@/components/auth-guard/auth-guard";
+import { LogoutButton } from "@/components/logout-button/logout-button";
 import { PlannedAreas } from "@/components/planned-areas/planned-areas";
 
 export default function Home() {
   return (
-    <section>
-      <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
-        Fullstack Challenge Frontend
-      </h1>
-      <p className="mt-3 max-w-2xl text-slate-600">
-        The project foundation is ready. Core modules will be implemented in the
-        next steps.
-      </p>
+    <AuthGuard mode="protected">
+      <section>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight text-slate-900">
+              Fullstack Challenge Frontend
+            </h1>
+            <p className="mt-3 max-w-2xl text-slate-600">
+              The project foundation is ready. Core modules will be implemented
+              in the next steps.
+            </p>
+          </div>
 
-      <PlannedAreas />
-    </section>
+          <LogoutButton />
+        </div>
+
+        <PlannedAreas />
+      </section>
+    </AuthGuard>
   );
 }
+
+
