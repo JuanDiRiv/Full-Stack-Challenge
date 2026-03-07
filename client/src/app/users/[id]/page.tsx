@@ -6,8 +6,10 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { LogoutButton } from "@/components/logout-button/logout-button";
-import { getUserById } from "@/lib/api";
+import { SaveUserButton } from "@/components/users/save-user-button/save-user-button";
+import { getSavedUsers, getUserById } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
+import type { SavedUser } from "@/types/saved-user";
 
 export default function UserDetailPage() {
     const params = useParams<{ id: string }>();
@@ -16,6 +18,16 @@ export default function UserDetailPage() {
     const [user, setUser] = useState<ReqResUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
+    const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
+
+    async function loadSavedUsers() {
+        try {
+            const response = await getSavedUsers();
+            setSavedUsers(response.data || []);
+        } catch {
+            setSavedUsers([]);
+        }
+    }
 
     useEffect(() => {
         async function loadUser() {
@@ -36,8 +48,13 @@ export default function UserDetailPage() {
 
         if (userId) {
             void loadUser();
+            void loadSavedUsers();
         }
     }, [userId]);
+
+    const isSaved = user
+        ? savedUsers.some((savedUser) => savedUser.externalId === user.id)
+        : false;
 
     return (
         <AuthGuard mode="protected">
@@ -88,6 +105,14 @@ export default function UserDetailPage() {
                                     {user.firstName} {user.lastName}
                                 </h2>
                                 <p className="text-sm text-slate-600">{user.email}</p>
+                            </div>
+
+                            <div className="ml-auto">
+                                {isSaved ? (
+                                    <p className="text-sm font-medium text-green-700">Saved locally</p>
+                                ) : (
+                                    <SaveUserButton externalId={user.id} onSaved={loadSavedUsers} />
+                                )}
                             </div>
                         </div>
 

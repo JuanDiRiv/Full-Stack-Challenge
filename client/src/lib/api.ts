@@ -1,4 +1,5 @@
 import type { ReqResUser, ReqResUsersPage } from "@/types/reqres-user";
+import type { SavedUser } from "@/types/saved-user";
 
 type LoginPayload = {
   email: string;
@@ -129,4 +130,29 @@ export async function getUserById(
     message: parsed.message,
     data: normalizeReqResUser(user),
   };
+}
+
+export async function importUserByExternalId(
+  id: string | number,
+): Promise<ApiResponse<SavedUser>> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/users/import/${encodeURIComponent(String(id))}`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+
+  return parseApiResponse<SavedUser>(response);
+}
+
+export async function getSavedUsers(): Promise<ApiResponse<SavedUser[]>> {
+  const response = await fetch(`${getApiBaseUrl()}/api/users/saved`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  return parseApiResponse<SavedUser[]>(response);
 }

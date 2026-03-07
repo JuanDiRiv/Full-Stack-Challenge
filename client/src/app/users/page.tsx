@@ -7,8 +7,9 @@ import { LogoutButton } from "@/components/logout-button/logout-button";
 import { PaginationControls } from "@/components/users/pagination-controls/pagination-controls";
 import { UsersSearch } from "@/components/users/users-search/users-search";
 import { UsersList } from "@/components/users/users-list/users-list";
-import { getUsers } from "@/lib/api";
+import { getSavedUsers, getUsers } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
+import type { SavedUser } from "@/types/saved-user";
 
 export default function UsersPage() {
     const [users, setUsers] = useState<ReqResUser[]>([]);
@@ -17,6 +18,7 @@ export default function UsersPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchValue, setSearchValue] = useState("");
+    const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
 
     async function loadUsers(nextPage: number) {
         setErrorMessage("");
@@ -35,9 +37,21 @@ export default function UsersPage() {
         }
     }
 
+    async function loadSavedUsers() {
+        try {
+            const response = await getSavedUsers();
+            setSavedUsers(response.data || []);
+        } catch {
+            setSavedUsers([]);
+        }
+    }
+
     useEffect(() => {
         void loadUsers(1);
+        void loadSavedUsers();
     }, []);
+
+    const savedExternalIds = savedUsers.map((user) => user.externalId);
 
     const normalizedSearch = searchValue.trim().toLowerCase();
     const filteredUsers = users.filter((user) => {
@@ -77,6 +91,8 @@ export default function UsersPage() {
                         users={filteredUsers}
                         isLoading={isLoading}
                         errorMessage={errorMessage}
+                        savedExternalIds={savedExternalIds}
+                        onSaveUser={loadSavedUsers}
                         emptyMessage={
                             normalizedSearch
                                 ? "No users match your search for this page"

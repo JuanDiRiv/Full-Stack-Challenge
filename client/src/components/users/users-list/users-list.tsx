@@ -6,6 +6,8 @@ type UsersListProps = {
     isLoading: boolean;
     errorMessage: string;
     emptyMessage?: string;
+    savedExternalIds: number[];
+    onSaveUser: () => Promise<void> | void;
 };
 
 export function UsersList({
@@ -13,6 +15,8 @@ export function UsersList({
     isLoading,
     errorMessage,
     emptyMessage = "No users found",
+    savedExternalIds,
+    onSaveUser,
 }: UsersListProps) {
     if (isLoading) {
         return (
@@ -43,7 +47,12 @@ export function UsersList({
             <h2 className="text-lg font-semibold text-slate-900">Users</h2>
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 {users.map((user) => (
-                    <UserCard key={user.id} user={user} />
+                    <UserCard
+                        key={user.id}
+                        user={user}
+                        isSaved={savedExternalIds.includes(user.id)}
+                        onSave={onSaveUser}
+                    />
                 ))}
             </div>
         </section>
