@@ -25,5 +25,5 @@ export const env: Env = {
   NODE_ENV: (process.env.NODE_ENV as NodeEnvironment) || "development",
   PORT: Number(process.env.PORT) || 4000,
   MONGODB_URI: getRequiredEnv("MONGODB_URI"),
-  CORS_ORIGIN: process.env.CORS_ORIGIN || "*"
+  CORS_ORIGIN: process.env.CORS_ORIGIN || "*",
 };
