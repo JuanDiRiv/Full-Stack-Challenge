@@ -1,5 +1,6 @@
 import type { ReqResUser, ReqResUsersPage } from "@/types/reqres-user";
 import type { SavedUser } from "@/types/saved-user";
+import type { CreatePostPayload, Post, UpdatePostPayload } from "@/types/post";
 
 type LoginPayload = {
   email: string;
@@ -155,4 +156,68 @@ export async function getSavedUsers(): Promise<ApiResponse<SavedUser[]>> {
   });
 
   return parseApiResponse<SavedUser[]>(response);
+}
+
+export async function createPost(
+  payload: CreatePostPayload,
+): Promise<ApiResponse<Post>> {
+  const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return parseApiResponse<Post>(response);
+}
+
+export async function getPosts(): Promise<ApiResponse<Post[]>> {
+  const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
+    method: "GET",
+    cache: "no-store",
+  });
+
+  return parseApiResponse<Post[]>(response);
+}
+
+export async function getPostById(id: string): Promise<ApiResponse<Post>> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
+    {
+      method: "GET",
+      cache: "no-store",
+    },
+  );
+
+  return parseApiResponse<Post>(response);
+}
+
+export async function updatePost(
+  id: string,
+  payload: UpdatePostPayload,
+): Promise<ApiResponse<Post>> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    },
+  );
+
+  return parseApiResponse<Post>(response);
+}
+
+export async function deletePost(id: string): Promise<ApiResponse<null>> {
+  const response = await fetch(
+    `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
+    {
+      method: "DELETE",
+    },
+  );
+
+  return parseApiResponse<null>(response);
 }
