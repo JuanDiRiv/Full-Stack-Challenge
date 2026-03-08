@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Fullstack challenge backend API on AWS Lambda
+
+Resources:
+  BackendApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: nodejs22.x
+      CodeUri: server/
+      Handler: src/lambda.handler
+      MemorySize: 1024
+      Timeout: 15
+      Environment:
+        Variables:
+          NODE_ENV: production
+          MONGODB_URI: mongodb+srv:etc
+          CORS_ORIGIN: https://full-stack-challenge-sage.vercel.app
+          REQRES_BASE_URL: https://reqres.in
+          REQRES_API_KEY: My-api-key
+      Events:
+        ApiRoot:
+          Type: HttpApi
+          Properties:
+            Path: /
+            Method: ANY
+        ApiProxy:
+          Type: HttpApi
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        EntryPoints:
+          - src/lambda.ts
+        Target: es2022
+        Sourcemap: true
+        Minify: false
