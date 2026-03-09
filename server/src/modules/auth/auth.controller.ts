@@ -6,10 +6,12 @@ import { env } from "../../config/env";
 const AUTH_COOKIE_NAME = "auth_token";
 
 function getAuthCookieOptions() {
+  const isProduction = env.NODE_ENV === "production";
+
   return {
     httpOnly: true,
-    sameSite: "lax" as const,
-    secure: env.NODE_ENV === "production",
+    sameSite: isProduction ? ("none" as const) : ("lax" as const),
+    secure: isProduction,
     path: "/",
   };
 }
