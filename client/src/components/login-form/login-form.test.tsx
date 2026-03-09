@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LoginForm } from "@/components/login-form/login-form";
 import { loginRequest } from "@/lib/api";
-import { saveToken } from "@/lib/auth";
 
 const pushMock = jest.fn();
 
@@ -15,25 +14,17 @@ jest.mock("@/lib/api", () => ({
     loginRequest: jest.fn(),
 }));
 
-jest.mock("@/lib/auth", () => ({
-    saveToken: jest.fn(),
-}));
-
 describe("LoginForm", () => {
     beforeEach(() => {
         jest.clearAllMocks();
     });
 
-    it("submits valid credentials, saves token, and redirects", async () => {
+    it("submits valid credentials and redirects", async () => {
         const mockedLoginRequest = jest.mocked(loginRequest);
-        const mockedSaveToken = jest.mocked(saveToken);
 
         mockedLoginRequest.mockResolvedValue({
             success: true,
             message: "Login success",
-            data: {
-                token: "token-123",
-            },
         });
 
         render(<LoginForm />);
@@ -56,7 +47,6 @@ describe("LoginForm", () => {
             });
         });
 
-        expect(mockedSaveToken).toHaveBeenCalledWith("token-123");
         expect(pushMock).toHaveBeenCalledWith("/");
     });
 });

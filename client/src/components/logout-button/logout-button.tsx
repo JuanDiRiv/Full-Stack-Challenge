@@ -1,13 +1,18 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { removeToken } from "@/lib/auth";
+import { logoutRequest } from "@/lib/api";
 
 export function LogoutButton() {
     const router = useRouter();
 
-    function handleLogout() {
-        removeToken();
+    async function handleLogout() {
+        try {
+            await logoutRequest();
+        } catch {
+            // Always continue to login screen even if logout request fails.
+        }
+
         router.replace("/login");
     }
 

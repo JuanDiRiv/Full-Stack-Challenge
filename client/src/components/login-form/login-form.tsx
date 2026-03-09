@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { saveToken } from "@/lib/auth";
 import { loginRequest } from "@/lib/api";
 
 export function LoginForm() {
@@ -18,13 +17,11 @@ export function LoginForm() {
 
         try {
             const response = await loginRequest({ email, password });
-            const token = response.data?.token;
 
-            if (!response.success || !token) {
+            if (!response.success) {
                 throw new Error(response.message || "Login failed");
             }
 
-            saveToken(token);
             router.push("/");
         } catch (error) {
             const message =

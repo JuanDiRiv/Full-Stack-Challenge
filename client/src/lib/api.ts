@@ -7,18 +7,23 @@ type LoginPayload = {
   password: string;
 };
 
+type SessionStatusResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    authenticated: boolean;
+  };
+};
+
 type ApiResponse<T> = {
   success: boolean;
   message: string;
   data: T;
 };
 
-type LoginApiResponse = {
+type BasicApiResponse = {
   success: boolean;
   message: string;
-  data?: {
-    token?: string;
-  };
 };
 
 function getApiBaseUrl(): string {
@@ -39,19 +44,51 @@ async function parseApiResponse<T>(
 
 export async function loginRequest(
   payload: LoginPayload,
-): Promise<LoginApiResponse> {
+): Promise<BasicApiResponse> {
   const response = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
   });
 
-  const responseBody = (await response.json()) as LoginApiResponse;
+  const responseBody = (await response.json()) as BasicApiResponse;
 
   if (!response.ok) {
     throw new Error(responseBody.message || "Login failed");
+  }
+
+  return responseBody;
+}
+
+export async function logoutRequest(): Promise<BasicApiResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  const responseBody = (await response.json()) as BasicApiResponse;
+
+  if (!response.ok) {
+    throw new Error(responseBody.message || "Logout failed");
+  }
+
+  return responseBody;
+}
+
+export async function getSessionStatus(): Promise<SessionStatusResponse> {
+  const response = await fetch(`${getApiBaseUrl()}/api/auth/session`, {
+    method: "GET",
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  const responseBody = (await response.json()) as SessionStatusResponse;
+
+  if (!response.ok) {
+    throw new Error(responseBody.message || "Unable to verify session");
   }
 
   return responseBody;
@@ -92,6 +129,7 @@ export async function getUsers(
     `${getApiBaseUrl()}/api/users?page=${encodeURIComponent(String(page))}`,
     {
       method: "GET",
+      credentials: "include",
       cache: "no-store",
     },
   );
@@ -117,6 +155,7 @@ export async function getUserById(
     `${getApiBaseUrl()}/api/users/${encodeURIComponent(id)}`,
     {
       method: "GET",
+      credentials: "include",
       cache: "no-store",
     },
   );
@@ -140,6 +179,7 @@ export async function importUserByExternalId(
     `${getApiBaseUrl()}/api/users/import/${encodeURIComponent(String(id))}`,
     {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -152,6 +192,7 @@ export async function importUserByExternalId(
 export async function getSavedUsers(): Promise<ApiResponse<SavedUser[]>> {
   const response = await fetch(`${getApiBaseUrl()}/api/users/saved`, {
     method: "GET",
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -163,6 +204,7 @@ export async function createPost(
 ): Promise<ApiResponse<Post>> {
   const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "POST",
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -175,6 +217,7 @@ export async function createPost(
 export async function getPosts(): Promise<ApiResponse<Post[]>> {
   const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "GET",
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -186,6 +229,7 @@ export async function getPostById(id: string): Promise<ApiResponse<Post>> {
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "GET",
+      credentials: "include",
       cache: "no-store",
     },
   );
@@ -201,6 +245,7 @@ export async function updatePost(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "PATCH",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
       },
@@ -216,6 +261,7 @@ export async function deletePost(id: string): Promise<ApiResponse<null>> {
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 

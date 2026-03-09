@@ -1,8 +1,8 @@
 "use client";
 
-import { ReactNode, useEffect, useSyncExternalStore } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getToken } from "@/lib/auth";
+import { getSessionStatus } from "@/lib/api";
 
 type AuthGuardMode = "protected" | "guest";
 
@@ -13,21 +13,29 @@ type AuthGuardProps = {
 
 export function AuthGuard({ mode, children }: AuthGuardProps) {
     const router = useRouter();
+    const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    const token = useSyncExternalStore(
-        () => () => {
-            return;
-        },
-        () => getToken(),
-        () => undefined,
-    );
+    useEffect(() => {
+        async function checkSession() {
+            try {
+                const response = await getSessionStatus();
+                setIsAuthenticated(response.data.authenticated);
+            } catch {
+                setIsAuthenticated(false);
+            } finally {
+                setIsCheckingAuth(false);
+            }
+        }
 
-    const isCheckingAuth = typeof token === "undefined";
-    const shouldRedirectToLogin = mode === "protected" && token === null;
-    const shouldRedirectToHome = mode === "guest" && typeof token === "string";
+        void checkSession();
+    }, []);
+
+    const shouldRedirectToLogin = mode === "protected" && !isAuthenticated;
+    const shouldRedirectToHome = mode === "guest" && isAuthenticated;
     const isAllowed =
-        (mode === "protected" && typeof token === "string") ||
-        (mode === "guest" && token === null);
+        (mode === "protected" && isAuthenticated) ||
+        (mode === "guest" && !isAuthenticated);
 
     useEffect(() => {
         if (isCheckingAuth) {
