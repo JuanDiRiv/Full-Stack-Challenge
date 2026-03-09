@@ -3,6 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSessionStatus } from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type AuthGuardMode = "protected" | "guest";
 
@@ -54,8 +55,11 @@ export function AuthGuard({ mode, children }: AuthGuardProps) {
 
     if (isCheckingAuth) {
         return (
-            <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-                Checking authentication...
+            <div className="rounded-lg border border-slate-200 bg-white p-6">
+                <div className="space-y-3">
+                    <Skeleton className="h-4 w-44" />
+                    <Skeleton className="h-4 w-64" />
+                </div>
             </div>
         );
     }

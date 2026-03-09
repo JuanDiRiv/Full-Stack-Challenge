@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { EditPostForm } from "@/components/posts/edit-post-form/edit-post-form";
+import { Skeleton } from "@/components/ui/skeleton";
 import { deletePost, getPostById, getSavedUsers } from "@/lib/api";
 import type { Post } from "@/types/post";
 import type { SavedUser } from "@/types/saved-user";
@@ -90,8 +91,38 @@ export default function PostDetailPage() {
                 </header>
 
                 {isLoading ? (
-                    <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-                        Loading post...
+                    <div className="space-y-6">
+                        <article className="rounded-lg border border-slate-200 bg-white p-6">
+                            <Skeleton className="h-7 w-3/5" />
+                            <div className="mt-3 space-y-2">
+                                <Skeleton className="h-4 w-full" />
+                                <Skeleton className="h-4 w-11/12" />
+                                <Skeleton className="h-4 w-9/12" />
+                            </div>
+
+                            <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Skeleton className="h-3 w-16" />
+                                    <Skeleton className="h-4 w-56" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Skeleton className="h-3 w-14" />
+                                    <Skeleton className="h-4 w-44" />
+                                </div>
+                            </div>
+
+                            <Skeleton className="mt-6 h-10 w-28" />
+                        </article>
+
+                        <section className="rounded-lg border border-slate-200 bg-white p-6">
+                            <Skeleton className="h-6 w-32" />
+                            <div className="mt-4 space-y-3">
+                                <Skeleton className="h-10 w-full" />
+                                <Skeleton className="h-28 w-full" />
+                                <Skeleton className="h-10 w-full" />
+                                <Skeleton className="h-10 w-32" />
+                            </div>
+                        </section>
                     </div>
                 ) : null}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getSavedUsers, updatePost } from "@/lib/api";
 import type { Post } from "@/types/post";
 import type { SavedUser } from "@/types/saved-user";
@@ -102,24 +103,28 @@ export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
                     <label htmlFor="editAuthorUserId" className="mb-1 block text-sm font-medium text-slate-700">
                         Author
                     </label>
-                    <select
-                        id="editAuthorUserId"
-                        value={authorUserId}
-                        onChange={(event) => setAuthorUserId(event.target.value)}
-                        required
-                        disabled={isLoadingUsers || savedUsers.length === 0}
-                        className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-slate-300 focus:ring disabled:cursor-not-allowed disabled:bg-slate-100"
-                    >
-                        {!hasCurrentAuthorInSavedUsers && authorUserId ? (
-                            <option value={authorUserId}>Unknown author (current value)</option>
-                        ) : null}
+                    {isLoadingUsers ? (
+                        <Skeleton className="h-10 w-full" />
+                    ) : (
+                        <select
+                            id="editAuthorUserId"
+                            value={authorUserId}
+                            onChange={(event) => setAuthorUserId(event.target.value)}
+                            required
+                            disabled={savedUsers.length === 0}
+                            className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 outline-none ring-slate-300 focus:ring disabled:cursor-not-allowed disabled:bg-slate-100"
+                        >
+                            {!hasCurrentAuthorInSavedUsers && authorUserId ? (
+                                <option value={authorUserId}>Unknown author (current value)</option>
+                            ) : null}
 
-                        {savedUsers.map((savedUser) => (
-                            <option key={savedUser._id} value={savedUser._id}>
-                                {savedUser.firstName} {savedUser.lastName} — {savedUser.email}
-                            </option>
-                        ))}
-                    </select>
+                            {savedUsers.map((savedUser) => (
+                                <option key={savedUser._id} value={savedUser._id}>
+                                    {savedUser.firstName} {savedUser.lastName} — {savedUser.email}
+                                </option>
+                            ))}
+                        </select>
+                    )}
                 </div>
 
                 <button

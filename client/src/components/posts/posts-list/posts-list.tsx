@@ -1,4 +1,5 @@
 import { PostCard } from "@/components/posts/post-card/post-card";
+import { PostCardSkeleton } from "@/components/posts/post-card-skeleton/post-card-skeleton";
 import type { Post } from "@/types/post";
 import type { SavedUser } from "@/types/saved-user";
 
@@ -19,8 +20,14 @@ export function PostsList({
 }: PostsListProps) {
     if (isLoading) {
         return (
-            <section className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-                Loading posts...
+            <section>
+                <h2 className="text-lg font-semibold text-slate-900">Posts</h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <PostCardSkeleton />
+                    <PostCardSkeleton />
+                    <PostCardSkeleton />
+                    <PostCardSkeleton />
+                </div>
             </section>
         );
     }

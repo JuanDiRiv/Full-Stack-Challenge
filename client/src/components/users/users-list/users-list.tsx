@@ -1,5 +1,6 @@
 import type { ReqResUser } from "@/types/reqres-user";
 import { UserCard } from "@/components/users/user-card/user-card";
+import { UserCardSkeleton } from "@/components/users/user-card-skeleton/user-card-skeleton";
 
 type UsersListProps = {
     users: ReqResUser[];
@@ -20,8 +21,14 @@ export function UsersList({
 }: UsersListProps) {
     if (isLoading) {
         return (
-            <section className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-                Loading users...
+            <section>
+                <h2 className="text-lg font-semibold text-slate-900">Users</h2>
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                    <UserCardSkeleton />
+                    <UserCardSkeleton />
+                    <UserCardSkeleton />
+                    <UserCardSkeleton />
+                </div>
             </section>
         );
     }

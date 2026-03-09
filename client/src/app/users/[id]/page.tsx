@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { SaveUserButton } from "@/components/users/save-user-button/save-user-button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { getSavedUsers, getUserById } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
 import type { SavedUser } from "@/types/saved-user";
@@ -76,9 +77,27 @@ export default function UserDetailPage() {
                 </header>
 
                 {isLoading ? (
-                    <div className="rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600">
-                        Loading user details...
-                    </div>
+                    <article className="rounded-lg border border-slate-200 bg-white p-6">
+                        <div className="flex items-center gap-4">
+                            <Skeleton className="h-16 w-16 rounded-full" />
+                            <div className="flex-1 space-y-2">
+                                <Skeleton className="h-6 w-56" />
+                                <Skeleton className="h-4 w-64" />
+                            </div>
+                            <Skeleton className="h-9 w-28" />
+                        </div>
+
+                        <div className="mt-6 grid gap-3 sm:grid-cols-2">
+                            <div className="space-y-2">
+                                <Skeleton className="h-3 w-24" />
+                                <Skeleton className="h-4 w-20" />
+                            </div>
+                            <div className="space-y-2">
+                                <Skeleton className="h-3 w-16" />
+                                <Skeleton className="h-4 w-52" />
+                            </div>
+                        </div>
+                    </article>
                 ) : null}
 
                 {!isLoading && errorMessage ? (
