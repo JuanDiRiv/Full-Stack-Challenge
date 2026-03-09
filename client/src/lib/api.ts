@@ -15,10 +15,10 @@ type SessionStatusResponse = {
   };
 };
 
-type ApiResponse<T> = {
+type ApiEnvelope<TData> = {
   success: boolean;
   message: string;
-  data: T;
+  data: TData;
 };
 
 type BasicApiResponse = {
@@ -30,33 +30,40 @@ function getApiBaseUrl(): string {
   return process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
 }
 
-async function parseApiResponse<T>(
-  response: Response,
-): Promise<ApiResponse<T>> {
-  const responseBody = (await response.json()) as ApiResponse<T>;
+const CREDENTIALS_INCLUDE: RequestCredentials = "include";
+const NO_STORE_CACHE: RequestCache = "no-store";
 
-  if (!response.ok) {
-    throw new Error(responseBody.message || "Request failed");
+function getJsonHeaders(): HeadersInit {
+  return {
+    "Content-Type": "application/json",
+  };
+}
+
+async function parseApiResponse<TData>(
+  httpResponse: Response,
+): Promise<ApiEnvelope<TData>> {
+  const apiResponseBody = (await httpResponse.json()) as ApiEnvelope<TData>;
+
+  if (!httpResponse.ok) {
+    throw new Error(apiResponseBody.message || "Request failed");
   }
 
-  return responseBody;
+  return apiResponseBody;
 }
 
 export async function loginRequest(
   payload: LoginPayload,
 ): Promise<BasicApiResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
     method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    credentials: CREDENTIALS_INCLUDE,
+    headers: getJsonHeaders(),
     body: JSON.stringify(payload),
   });
 
-  const responseBody = (await response.json()) as BasicApiResponse;
+  const responseBody = (await httpResponse.json()) as BasicApiResponse;
 
-  if (!response.ok) {
+  if (!httpResponse.ok) {
     throw new Error(responseBody.message || "Login failed");
   }
 
@@ -64,14 +71,14 @@ export async function loginRequest(
 }
 
 export async function logoutRequest(): Promise<BasicApiResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
     method: "POST",
-    credentials: "include",
+    credentials: CREDENTIALS_INCLUDE,
   });
 
-  const responseBody = (await response.json()) as BasicApiResponse;
+  const responseBody = (await httpResponse.json()) as BasicApiResponse;
 
-  if (!response.ok) {
+  if (!httpResponse.ok) {
     throw new Error(responseBody.message || "Logout failed");
   }
 
@@ -79,15 +86,15 @@ export async function logoutRequest(): Promise<BasicApiResponse> {
 }
 
 export async function getSessionStatus(): Promise<SessionStatusResponse> {
-  const response = await fetch(`${getApiBaseUrl()}/api/auth/session`, {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/session`, {
     method: "GET",
-    credentials: "include",
-    cache: "no-store",
+    credentials: CREDENTIALS_INCLUDE,
+    cache: NO_STORE_CACHE,
   });
 
-  const responseBody = (await response.json()) as SessionStatusResponse;
+  const responseBody = (await httpResponse.json()) as SessionStatusResponse;
 
-  if (!response.ok) {
+  if (!httpResponse.ok) {
     throw new Error(responseBody.message || "Unable to verify session");
   }
 
@@ -124,146 +131,146 @@ function normalizeReqResUser(user: RawReqResUser): ReqResUser {
 
 export async function getUsers(
   page: number,
-): Promise<ApiResponse<ReqResUsersPage>> {
-  const response = await fetch(
+): Promise<ApiEnvelope<ReqResUsersPage>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users?page=${encodeURIComponent(String(page))}`,
     {
       method: "GET",
-      credentials: "include",
-      cache: "no-store",
+      credentials: CREDENTIALS_INCLUDE,
+      cache: NO_STORE_CACHE,
     },
   );
 
-  const parsed = await parseApiResponse<RawReqResUsersData>(response);
-  const list = parsed.data.users || parsed.data.data || [];
+  const usersPageResponse =
+    await parseApiResponse<RawReqResUsersData>(httpResponse);
+  const reqResUsers =
+    usersPageResponse.data.users || usersPageResponse.data.data || [];
 
   return {
-    success: parsed.success,
-    message: parsed.message,
+    success: usersPageResponse.success,
+    message: usersPageResponse.message,
     data: {
-      users: list.map(normalizeReqResUser),
-      page: parsed.data.page || page,
-      totalPages: parsed.data.totalPages || parsed.data.total_pages || 1,
+      users: reqResUsers.map(normalizeReqResUser),
+      page: usersPageResponse.data.page || page,
+      totalPages:
+        usersPageResponse.data.totalPages ||
+        usersPageResponse.data.total_pages ||
+        1,
     },
   };
 }
 
 export async function getUserById(
   id: string | number,
-): Promise<ApiResponse<ReqResUser>> {
-  const response = await fetch(
+): Promise<ApiEnvelope<ReqResUser>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users/${encodeURIComponent(id)}`,
     {
       method: "GET",
-      credentials: "include",
-      cache: "no-store",
+      credentials: CREDENTIALS_INCLUDE,
+      cache: NO_STORE_CACHE,
     },
   );
 
-  const parsed = await parseApiResponse<
+  const userResponse = await parseApiResponse<
     RawReqResUser | { user: RawReqResUser }
-  >(response);
-  const user = "user" in parsed.data ? parsed.data.user : parsed.data;
+  >(httpResponse);
+  const rawUser =
+    "user" in userResponse.data ? userResponse.data.user : userResponse.data;
 
   return {
-    success: parsed.success,
-    message: parsed.message,
-    data: normalizeReqResUser(user),
+    success: userResponse.success,
+    message: userResponse.message,
+    data: normalizeReqResUser(rawUser),
   };
 }
 
 export async function importUserByExternalId(
   id: string | number,
-): Promise<ApiResponse<SavedUser>> {
-  const response = await fetch(
+): Promise<ApiEnvelope<SavedUser>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users/import/${encodeURIComponent(String(id))}`,
     {
       method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: CREDENTIALS_INCLUDE,
+      headers: getJsonHeaders(),
     },
   );
 
-  return parseApiResponse<SavedUser>(response);
+  return parseApiResponse<SavedUser>(httpResponse);
 }
 
-export async function getSavedUsers(): Promise<ApiResponse<SavedUser[]>> {
-  const response = await fetch(`${getApiBaseUrl()}/api/users/saved`, {
+export async function getSavedUsers(): Promise<ApiEnvelope<SavedUser[]>> {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/users/saved`, {
     method: "GET",
-    credentials: "include",
-    cache: "no-store",
+    credentials: CREDENTIALS_INCLUDE,
+    cache: NO_STORE_CACHE,
   });
 
-  return parseApiResponse<SavedUser[]>(response);
+  return parseApiResponse<SavedUser[]>(httpResponse);
 }
 
 export async function createPost(
   payload: CreatePostPayload,
-): Promise<ApiResponse<Post>> {
-  const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
+): Promise<ApiEnvelope<Post>> {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    credentials: CREDENTIALS_INCLUDE,
+    headers: getJsonHeaders(),
     body: JSON.stringify(payload),
   });
 
-  return parseApiResponse<Post>(response);
+  return parseApiResponse<Post>(httpResponse);
 }
 
-export async function getPosts(): Promise<ApiResponse<Post[]>> {
-  const response = await fetch(`${getApiBaseUrl()}/api/posts`, {
+export async function getPosts(): Promise<ApiEnvelope<Post[]>> {
+  const httpResponse = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "GET",
-    credentials: "include",
-    cache: "no-store",
+    credentials: CREDENTIALS_INCLUDE,
+    cache: NO_STORE_CACHE,
   });
 
-  return parseApiResponse<Post[]>(response);
+  return parseApiResponse<Post[]>(httpResponse);
 }
 
-export async function getPostById(id: string): Promise<ApiResponse<Post>> {
-  const response = await fetch(
+export async function getPostById(id: string): Promise<ApiEnvelope<Post>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "GET",
-      credentials: "include",
-      cache: "no-store",
+      credentials: CREDENTIALS_INCLUDE,
+      cache: NO_STORE_CACHE,
     },
   );
 
-  return parseApiResponse<Post>(response);
+  return parseApiResponse<Post>(httpResponse);
 }
 
 export async function updatePost(
   id: string,
   payload: UpdatePostPayload,
-): Promise<ApiResponse<Post>> {
-  const response = await fetch(
+): Promise<ApiEnvelope<Post>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "PATCH",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      credentials: CREDENTIALS_INCLUDE,
+      headers: getJsonHeaders(),
       body: JSON.stringify(payload),
     },
   );
 
-  return parseApiResponse<Post>(response);
+  return parseApiResponse<Post>(httpResponse);
 }
 
-export async function deletePost(id: string): Promise<ApiResponse<null>> {
-  const response = await fetch(
+export async function deletePost(id: string): Promise<ApiEnvelope<null>> {
+  const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
       method: "DELETE",
-      credentials: "include",
+      credentials: CREDENTIALS_INCLUDE,
     },
   );
 
-  return parseApiResponse<null>(response);
+  return parseApiResponse<null>(httpResponse);
 }

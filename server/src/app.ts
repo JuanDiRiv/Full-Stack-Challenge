@@ -17,16 +17,19 @@ function parseAllowedOrigins(corsOriginValue: string): string[] {
 
 const allowedOrigins = parseAllowedOrigins(env.CORS_ORIGIN);
 
+function isAllowedCorsOrigin(requestOrigin?: string): boolean {
+  if (!requestOrigin) {
+    return true;
+  }
+
+  return allowedOrigins.includes(requestOrigin);
+}
+
 app.use(
   cors({
     credentials: true,
     origin: (requestOrigin, callback) => {
-      if (!requestOrigin) {
-        callback(null, true);
-        return;
-      }
-
-      if (allowedOrigins.includes(requestOrigin)) {
+      if (isAllowedCorsOrigin(requestOrigin)) {
         callback(null, true);
         return;
       }

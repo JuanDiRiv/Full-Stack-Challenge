@@ -6,48 +6,54 @@ interface ReqResLoginSuccess {
   token: string;
 }
 
-interface ReqResLoginError {
+interface ReqResLoginErrorResponse {
   error?: string;
 }
 
-export async function loginWithReqRes(input: LoginInput): Promise<string> {
-  let response: Response;
-  const baseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
-  const headers: Record<string, string> = {
+export async function loginWithReqRes(
+  credentials: LoginInput,
+): Promise<string> {
+  let reqResResponse: Response;
+  const reqResBaseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
+  const requestHeaders: Record<string, string> = {
     "Content-Type": "application/json",
     "User-Agent": "fullstack-challenge/1.0",
   };
 
   if (env.REQRES_API_KEY) {
-    headers["x-api-key"] = env.REQRES_API_KEY;
+    requestHeaders["x-api-key"] = env.REQRES_API_KEY;
   }
 
   try {
-    response = await fetch(`${baseUrl}/api/login`, {
+    reqResResponse = await fetch(`${reqResBaseUrl}/api/login`, {
       method: "POST",
-      headers,
+      headers: requestHeaders,
       body: JSON.stringify({
-        email: input.email,
-        password: input.password,
+        email: credentials.email,
+        password: credentials.password,
       }),
     });
   } catch {
     throw new HttpError("Unable to complete login request", 502);
   }
 
-  if (!response.ok) {
+  if (!reqResResponse.ok) {
     let errorMessage = "Invalid email or password";
 
-    if (response.status === 401 || response.status === 403) {
-      throw new HttpError("Authentication request rejected", response.status);
+    if (reqResResponse.status === 401 || reqResResponse.status === 403) {
+      throw new HttpError(
+        "Authentication request rejected",
+        reqResResponse.status,
+      );
     }
 
     try {
-      const errorBody = (await response.json()) as ReqResLoginError;
+      const errorResponse =
+        (await reqResResponse.json()) as ReqResLoginErrorResponse;
 
-      if (errorBody.error) {
+      if (errorResponse.error) {
         errorMessage =
-          response.status === 400
+          reqResResponse.status === 400
             ? "Invalid email or password"
             : "Login request failed";
       }
@@ -55,14 +61,15 @@ export async function loginWithReqRes(input: LoginInput): Promise<string> {
       errorMessage = "Login request failed";
     }
 
-    throw new HttpError(errorMessage, response.status || 500);
+    throw new HttpError(errorMessage, reqResResponse.status || 500);
   }
 
-  const data = (await response.json()) as ReqResLoginSuccess;
+  const loginSuccessResponse =
+    (await reqResResponse.json()) as ReqResLoginSuccess;
 
-  if (!data.token) {
+  if (!loginSuccessResponse.token) {
     throw new HttpError("Login failed: token not received", 502);
   }
 
-  return data.token;
+  return loginSuccessResponse.token;
 }

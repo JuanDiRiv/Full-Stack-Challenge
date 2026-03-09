@@ -17,10 +17,10 @@ export function AuthGuard({ mode, children }: AuthGuardProps) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        async function checkSession() {
+        async function checkSessionStatus() {
             try {
-                const response = await getSessionStatus();
-                setIsAuthenticated(response.data.authenticated);
+                const sessionStatusResponse = await getSessionStatus();
+                setIsAuthenticated(sessionStatusResponse.data.authenticated);
             } catch {
                 setIsAuthenticated(false);
             } finally {
@@ -28,7 +28,7 @@ export function AuthGuard({ mode, children }: AuthGuardProps) {
             }
         }
 
-        void checkSession();
+        void checkSessionStatus();
     }, []);
 
     const shouldRedirectToLogin = mode === "protected" && !isAuthenticated;

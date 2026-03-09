@@ -15,14 +15,14 @@ export async function getUsersController(
 ): Promise<void> {
   try {
     const pageQuery = req.query.page;
-    const page = pageQuery ? Number(pageQuery) : 1;
+    const requestedPage = pageQuery ? Number(pageQuery) : 1;
 
-    const result = await listReqResUsers(page);
+    const paginatedUsers = await listReqResUsers(requestedPage);
 
     res.status(200).json({
       success: true,
       message: "Users retrieved",
-      data: result,
+      data: paginatedUsers,
     });
   } catch (error) {
     next(error);
@@ -60,14 +60,14 @@ export async function importUserController(
       throw new HttpError("Invalid external user id", 400);
     }
 
-    const result = await importUserByExternalId(externalId);
+    const importResult = await importUserByExternalId(externalId);
 
     res.status(200).json({
       success: true,
-      message: result.created
+      message: importResult.created
         ? "User imported successfully"
         : "User already saved",
-      data: result.user,
+      data: importResult.user,
     });
   } catch (error) {
     next(error);

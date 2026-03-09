@@ -23,6 +23,12 @@ interface ReqResUsersListResponse {
   data: ReqResUser[];
 }
 
+interface ListReqResUsersResult {
+  users: ReqResUser[];
+  page: number;
+  totalPages: number;
+}
+
 function buildReqResHeaders(): Record<string, string> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -37,11 +43,11 @@ function buildReqResHeaders(): Record<string, string> {
 }
 
 async function fetchReqResUserById(externalId: number): Promise<ReqResUser> {
-  const baseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
-  let response: Response;
+  const reqResBaseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
+  let reqResResponse: Response;
 
   try {
-    response = await fetch(`${baseUrl}/api/users/${externalId}`, {
+    reqResResponse = await fetch(`${reqResBaseUrl}/api/users/${externalId}`, {
       method: "GET",
       headers: buildReqResHeaders(),
     });
@@ -49,38 +55,42 @@ async function fetchReqResUserById(externalId: number): Promise<ReqResUser> {
     throw new HttpError("Unable to fetch user from external API", 502);
   }
 
-  if (!response.ok) {
-    if (response.status === 404) {
+  if (!reqResResponse.ok) {
+    if (reqResResponse.status === 404) {
       throw new HttpError("User not found in external API", 404);
     }
 
-    if (response.status === 401 || response.status === 403) {
-      throw new HttpError("External user request rejected", response.status);
+    if (reqResResponse.status === 401 || reqResResponse.status === 403) {
+      throw new HttpError(
+        "External user request rejected",
+        reqResResponse.status,
+      );
     }
 
     throw new HttpError(
       "Failed to fetch user from external API",
-      response.status || 502,
+      reqResResponse.status || 502,
     );
   }
 
-  const responseBody = (await response.json()) as ReqResUserResponse;
+  const reqResUserResponse =
+    (await reqResResponse.json()) as ReqResUserResponse;
 
-  if (!responseBody.data) {
+  if (!reqResUserResponse.data) {
     throw new HttpError("User not found in external API", 404);
   }
 
-  return responseBody.data;
+  return reqResUserResponse.data;
 }
 
 async function fetchReqResUsersByPage(
   page: number,
 ): Promise<ReqResUsersListResponse> {
-  const baseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
-  let response: Response;
+  const reqResBaseUrl = env.REQRES_BASE_URL.replace(/\/+$/, "");
+  let reqResResponse: Response;
 
   try {
-    response = await fetch(`${baseUrl}/api/users?page=${page}`, {
+    reqResResponse = await fetch(`${reqResBaseUrl}/api/users?page=${page}`, {
       method: "GET",
       headers: buildReqResHeaders(),
     });
@@ -88,31 +98,36 @@ async function fetchReqResUsersByPage(
     throw new HttpError("Unable to fetch users from external API", 502);
   }
 
-  if (!response.ok) {
-    if (response.status === 401 || response.status === 403) {
-      throw new HttpError("External users request rejected", response.status);
+  if (!reqResResponse.ok) {
+    if (reqResResponse.status === 401 || reqResResponse.status === 403) {
+      throw new HttpError(
+        "External users request rejected",
+        reqResResponse.status,
+      );
     }
 
     throw new HttpError(
       "Failed to fetch users from external API",
-      response.status || 502,
+      reqResResponse.status || 502,
     );
   }
 
-  return (await response.json()) as ReqResUsersListResponse;
+  return (await reqResResponse.json()) as ReqResUsersListResponse;
 }
 
-export async function listReqResUsers(page: number) {
+export async function listReqResUsers(
+  page: number,
+): Promise<ListReqResUsersResult> {
   if (!Number.isInteger(page) || page <= 0) {
     throw new HttpError("Invalid page query parameter", 400);
   }
 
-  const responseBody = await fetchReqResUsersByPage(page);
+  const reqResUsersResponse = await fetchReqResUsersByPage(page);
 
   return {
-    users: responseBody.data,
-    page: responseBody.page,
-    totalPages: responseBody.total_pages,
+    users: reqResUsersResponse.data,
+    page: reqResUsersResponse.page,
+    totalPages: reqResUsersResponse.total_pages,
   };
 }
 

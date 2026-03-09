@@ -4,7 +4,7 @@ dotenv.config();
 
 type NodeEnvironment = "development" | "test" | "production";
 
-interface Env {
+interface AppEnvironment {
   NODE_ENV: NodeEnvironment;
   PORT: number;
   MONGODB_URI: string;
@@ -55,7 +55,7 @@ function parseNodeEnv(value: string): NodeEnvironment {
   return value as NodeEnvironment;
 }
 
-export const env: Env = {
+export const env: AppEnvironment = {
   NODE_ENV: parseNodeEnv(process.env.NODE_ENV || "development"),
   PORT: parsePort(process.env.PORT),
   MONGODB_URI: getRequiredEnv("MONGODB_URI"),
