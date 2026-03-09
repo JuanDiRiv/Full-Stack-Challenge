@@ -1,6 +1,5 @@
 # dependencies
 node_modules/
-
 # build output
 dist/
 build/
@@ -30,3 +29,5 @@ pnpm-debug.log*
 *.tsbuildinfo
 
 *.aws-sam
+template.yaml
+

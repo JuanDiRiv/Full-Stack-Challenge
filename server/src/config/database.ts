@@ -11,7 +11,10 @@ export async function connectToDatabase(): Promise<void> {
 
   if (!cachedConnectionPromise) {
     console.log("MongoDB connection not found. Creating a new connection.");
-    cachedConnectionPromise = mongoose.connect(env.MONGODB_URI);
+    cachedConnectionPromise = mongoose.connect(env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+      family: 4,
+    });
   } else {
     console.log("MongoDB connection in progress. Reusing pending connection.");
   }
@@ -22,8 +25,6 @@ export async function connectToDatabase(): Promise<void> {
   } catch (error) {
     cachedConnectionPromise = null;
     console.error("MongoDB connection failed.", error);
-    throw new Error(
-      "Could not connect to MongoDB. Check MONGODB_URI and MongoDB service status.",
-    );
+    throw error;
   }
 }
