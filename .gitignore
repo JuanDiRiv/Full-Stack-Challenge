@@ -30,4 +30,3 @@ pnpm-debug.log*
 
 *.aws-sam
 template.yaml
-
