@@ -6,7 +6,7 @@ type NodeEnvironment = "development" | "test" | "production";
 
 interface Env {
   NODE_ENV: NodeEnvironment;
-  PORT: string;
+  PORT: number;
   MONGODB_URI: string;
   CORS_ORIGIN: string;
   REQRES_BASE_URL: string;
@@ -23,17 +23,21 @@ function getRequiredEnv(key: string): string {
   return value;
 }
 
-// function parsePort(value: string): number {
-//   const port = Number(value);
+function parsePort(value?: string): number {
+  if (!value) {
+    return 4000;
+  }
 
-//   if (!Number.isInteger(port) || port <= 0) {
-//     throw new Error(
-//       "Environment variable PORT must be a valid positive number",
-//     );
-//   }
+  const port = Number(value);
 
-//   return port;
-// }
+  if (!Number.isInteger(port) || port <= 0) {
+    throw new Error(
+      "Environment variable PORT must be a valid positive number when provided",
+    );
+  }
+
+  return port;
+}
 
 function parseNodeEnv(value: string): NodeEnvironment {
   const allowedValues: NodeEnvironment[] = [
@@ -53,9 +57,9 @@ function parseNodeEnv(value: string): NodeEnvironment {
 
 export const env: Env = {
   NODE_ENV: parseNodeEnv(process.env.NODE_ENV || "development"),
-  PORT: getRequiredEnv("PORT"),
+  PORT: parsePort(process.env.PORT),
   MONGODB_URI: getRequiredEnv("MONGODB_URI"),
   CORS_ORIGIN: getRequiredEnv("CORS_ORIGIN"),
-  REQRES_BASE_URL: process.env.REQRES_BASE_URL || "https://reqres.in",
+  REQRES_BASE_URL: getRequiredEnv("REQRES_BASE_URL"),
   REQRES_API_KEY: process.env.REQRES_API_KEY,
 };
