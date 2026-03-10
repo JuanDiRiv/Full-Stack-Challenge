@@ -9,7 +9,8 @@ export function errorMiddleware(
   _next: NextFunction,
 ): void {
   const statusCode = isHttpError(error) ? error.statusCode : 500;
-  const message = error instanceof Error ? error.message : "Internal server error";
+  const message =
+    error instanceof Error ? error.message : "Internal server error";
 
   res.status(statusCode).json({
     success: false,

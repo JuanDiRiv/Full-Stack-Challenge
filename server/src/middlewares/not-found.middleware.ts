@@ -6,5 +6,7 @@ export function notFoundMiddleware(
   _res: Response,
   next: NextFunction,
 ): void {
-  next(createHttpError(`Route not found: ${req.method} ${req.originalUrl}`, 404));
+  next(
+    createHttpError(`Route not found: ${req.method} ${req.originalUrl}`, 404),
+  );
 }
