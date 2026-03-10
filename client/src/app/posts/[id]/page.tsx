@@ -21,6 +21,7 @@ const PostDetailPage = () => {
     const [errorMessage, setErrorMessage] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
+    const [isRedirecting, setIsRedirecting] = useState(false);
 
     const loadPost = useCallback(async () => {
         setErrorMessage("");
@@ -69,6 +70,25 @@ const PostDetailPage = () => {
     const authorLabel = matchedAuthor
         ? `${matchedAuthor.firstName} ${matchedAuthor.lastName} — ${matchedAuthor.email}`
         : "Unknown author";
+
+    if (isRedirecting) {
+        return (
+            <AuthGuard mode="protected">
+                <section className="rounded-lg border border-slate-200 bg-white p-6"> 
+                    <div className="flex items-center gap-3">
+                        <span
+                            className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-900"
+                            aria-hidden="true"
+                        />
+                        <div>
+                            <h2 className="text-lg font-semibold text-slate-900">Saving changes</h2>
+                            <p className="text-sm text-slate-600">Redirecting...</p>
+                        </div>
+                    </div>
+                </section>
+            </AuthGuard>
+        );
+    }
 
     return (
         <AuthGuard mode="protected">
@@ -165,7 +185,16 @@ const PostDetailPage = () => {
                             </div>
                         </article>
 
-                        <EditPostForm post={post} onUpdated={loadPost} />
+                        <EditPostForm
+                            post={post}
+                            onUpdated={async () => {
+                                setIsRedirecting(true);
+                                await new Promise((resolve) => {
+                                    setTimeout(resolve, 700);
+                                });
+                                router.replace("/posts");
+                            }}
+                        />
                     </div>
                 ) : null}
             </section>
