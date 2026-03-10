@@ -1,18 +1,19 @@
 import { NextFunction, Request, Response } from "express";
 import { env } from "../config/env";
-import { HttpError } from "../utils/http-error";
+import { isHttpError } from "../utils/http-error";
 
 export function errorMiddleware(
-  error: Error,
+  error: unknown,
   _req: Request,
   res: Response,
   _next: NextFunction,
 ): void {
-  const statusCode = error instanceof HttpError ? error.statusCode : 500;
+  const statusCode = isHttpError(error) ? error.statusCode : 500;
+  const message = error instanceof Error ? error.message : "Internal server error";
 
   res.status(statusCode).json({
     success: false,
-    message: error.message || "Internal server error",
+    message,
     // ...(env.NODE_ENV === "development" && { stack: error.stack }),
   });
 }

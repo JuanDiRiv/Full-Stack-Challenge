@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 import { env } from "../../config/env";
-import { HttpError } from "../../utils/http-error";
+import { createHttpError } from "../../utils/http-error";
 import { SavedUserModel } from "./users.model";
 
 interface ReqResUser {
@@ -52,22 +52,22 @@ async function fetchReqResUserById(externalId: number): Promise<ReqResUser> {
       headers: buildReqResHeaders(),
     });
   } catch {
-    throw new HttpError("Unable to fetch user from external API", 502);
+    throw createHttpError("Unable to fetch user from external API", 502);
   }
 
   if (!reqResResponse.ok) {
     if (reqResResponse.status === 404) {
-      throw new HttpError("User not found in external API", 404);
+      throw createHttpError("User not found in external API", 404);
     }
 
     if (reqResResponse.status === 401 || reqResResponse.status === 403) {
-      throw new HttpError(
+      throw createHttpError(
         "External user request rejected",
         reqResResponse.status,
       );
     }
 
-    throw new HttpError(
+    throw createHttpError(
       "Failed to fetch user from external API",
       reqResResponse.status || 502,
     );
@@ -77,7 +77,7 @@ async function fetchReqResUserById(externalId: number): Promise<ReqResUser> {
     (await reqResResponse.json()) as ReqResUserResponse;
 
   if (!reqResUserResponse.data) {
-    throw new HttpError("User not found in external API", 404);
+    throw createHttpError("User not found in external API", 404);
   }
 
   return reqResUserResponse.data;
@@ -95,18 +95,18 @@ async function fetchReqResUsersByPage(
       headers: buildReqResHeaders(),
     });
   } catch {
-    throw new HttpError("Unable to fetch users from external API", 502);
+    throw createHttpError("Unable to fetch users from external API", 502);
   }
 
   if (!reqResResponse.ok) {
     if (reqResResponse.status === 401 || reqResResponse.status === 403) {
-      throw new HttpError(
+      throw createHttpError(
         "External users request rejected",
         reqResResponse.status,
       );
     }
 
-    throw new HttpError(
+    throw createHttpError(
       "Failed to fetch users from external API",
       reqResResponse.status || 502,
     );
@@ -119,7 +119,7 @@ export async function listReqResUsers(
   page: number,
 ): Promise<ListReqResUsersResult> {
   if (!Number.isInteger(page) || page <= 0) {
-    throw new HttpError("Invalid page query parameter", 400);
+    throw createHttpError("Invalid page query parameter", 400);
   }
 
   const reqResUsersResponse = await fetchReqResUsersByPage(page);
@@ -133,7 +133,7 @@ export async function listReqResUsers(
 
 export async function getReqResUserById(externalId: number) {
   if (!Number.isInteger(externalId) || externalId <= 0) {
-    throw new HttpError("Invalid user id", 400);
+    throw createHttpError("Invalid user id", 400);
   }
 
   return fetchReqResUserById(externalId);
@@ -171,13 +171,13 @@ export async function listSavedUsers() {
 
 export async function getSavedUserById(id: string) {
   if (!isValidObjectId(id)) {
-    throw new HttpError("Invalid user id", 400);
+    throw createHttpError("Invalid user id", 400);
   }
 
   const user = await SavedUserModel.findById(id);
 
   if (!user) {
-    throw new HttpError("Saved user not found", 404);
+    throw createHttpError("Saved user not found", 404);
   }
 
   return user;

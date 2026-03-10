@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { HttpError } from "../../utils/http-error";
+import { createHttpError } from "../../utils/http-error";
 import {
   getReqResUserById,
   getSavedUserById,
@@ -57,7 +57,7 @@ export async function importUserController(
     const externalId = Number(req.params.id);
 
     if (!Number.isInteger(externalId) || externalId <= 0) {
-      throw new HttpError("Invalid external user id", 400);
+      throw createHttpError("Invalid external user id", 400);
     }
 
     const importResult = await importUserByExternalId(externalId);

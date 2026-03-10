@@ -1,4 +1,4 @@
-import { HttpError } from "../../utils/http-error";
+import { createHttpError } from "../../utils/http-error";
 import { env } from "../../config/env";
 import { LoginInput } from "./auth.schema";
 
@@ -34,14 +34,14 @@ export async function loginWithReqRes(
       }),
     });
   } catch {
-    throw new HttpError("Unable to complete login request", 502);
+    throw createHttpError("Unable to complete login request", 502);
   }
 
   if (!reqResResponse.ok) {
     let errorMessage = "Invalid email or password";
 
     if (reqResResponse.status === 401 || reqResResponse.status === 403) {
-      throw new HttpError(
+      throw createHttpError(
         "Authentication request rejected",
         reqResResponse.status,
       );
@@ -61,14 +61,14 @@ export async function loginWithReqRes(
       errorMessage = "Login request failed";
     }
 
-    throw new HttpError(errorMessage, reqResResponse.status || 500);
+    throw createHttpError(errorMessage, reqResResponse.status || 500);
   }
 
   const loginSuccessResponse =
     (await reqResResponse.json()) as ReqResLoginSuccess;
 
   if (!loginSuccessResponse.token) {
-    throw new HttpError("Login failed: token not received", 502);
+    throw createHttpError("Login failed: token not received", 502);
   }
 
   return loginSuccessResponse.token;
