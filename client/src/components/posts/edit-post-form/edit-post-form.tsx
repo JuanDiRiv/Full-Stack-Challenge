@@ -11,7 +11,7 @@ type EditPostFormProps = {
     onUpdated: () => Promise<void> | void;
 };
 
-export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
+export const EditPostForm = ({ post, onUpdated }: EditPostFormProps) => {
     const [title, setTitle] = useState(post.title);
     const [content, setContent] = useState(post.content);
     const [authorUserId, setAuthorUserId] = useState(post.authorUserId);
@@ -28,7 +28,7 @@ export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
     }, [post]);
 
     useEffect(() => {
-        async function loadSavedUsers() {
+        const loadSavedUsers = async () => {
             try {
                 const response = await getSavedUsers();
                 setSavedUsers(response.data || []);
@@ -37,12 +37,12 @@ export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
             } finally {
                 setIsLoadingUsers(false);
             }
-        }
+        };
 
         void loadSavedUsers();
     }, []);
 
-    async function handleUpdatePost() {
+    const handleUpdatePost = async () => {
         if (savedUsers.length === 0) {
             return;
         }
@@ -66,7 +66,7 @@ export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
 
     const hasCurrentAuthorInSavedUsers = savedUsers.some(
         (savedUser) => savedUser._id === authorUserId,
@@ -155,4 +155,4 @@ export function EditPostForm({ post, onUpdated }: EditPostFormProps) {
             ) : null}
         </section>
     );
-}
+};

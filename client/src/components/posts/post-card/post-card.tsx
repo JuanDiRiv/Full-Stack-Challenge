@@ -12,7 +12,7 @@ type PostCardProps = {
     savedUsers: SavedUser[];
 };
 
-export function PostCard({ post, onDeleted, savedUsers }: PostCardProps) {
+export const PostCard = ({ post, onDeleted, savedUsers }: PostCardProps) => {
     const [isDeleting, setIsDeleting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -21,7 +21,7 @@ export function PostCard({ post, onDeleted, savedUsers }: PostCardProps) {
         ? `${matchedAuthor.firstName} ${matchedAuthor.lastName} — ${matchedAuthor.email}`
         : "Unknown author";
 
-    async function handleDelete() {
+    const handleDelete = async () => {
         setErrorMessage("");
         setIsDeleting(true);
 
@@ -34,7 +34,7 @@ export function PostCard({ post, onDeleted, savedUsers }: PostCardProps) {
         } finally {
             setIsDeleting(false);
         }
-    }
+    };
 
     return (
         <article className="rounded-lg border border-slate-200 bg-white p-4">
@@ -65,4 +65,4 @@ export function PostCard({ post, onDeleted, savedUsers }: PostCardProps) {
             {errorMessage ? <p className="mt-2 text-xs text-red-700">{errorMessage}</p> : null}
         </article>
     );
-}
+};

@@ -1,7 +1,7 @@
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import Link from "next/link";
 
-export default function Home() {
+const Home = () => {
   return (
     <AuthGuard mode="protected">
       <section className="space-y-6">
@@ -51,6 +51,8 @@ export default function Home() {
       </section>
     </AuthGuard>
   );
-}
+};
+
+export default Home;
 
 

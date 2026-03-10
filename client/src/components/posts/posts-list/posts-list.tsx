@@ -11,13 +11,13 @@ type PostsListProps = {
     savedUsers: SavedUser[];
 };
 
-export function PostsList({
+export const PostsList = ({
     posts,
     isLoading,
     errorMessage,
     onDeleted,
     savedUsers,
-}: PostsListProps) {
+}: PostsListProps) => {
     if (isLoading) {
         return (
             <section>
@@ -58,4 +58,4 @@ export function PostsList({
             </div>
         </section>
     );
-}
+};

@@ -6,13 +6,13 @@ type PaginationControlsProps = {
     isLoading: boolean;
 };
 
-export function PaginationControls({
+export const PaginationControls = ({
     page,
     totalPages,
     onPrevious,
     onNext,
     isLoading,
-}: PaginationControlsProps) {
+}: PaginationControlsProps) => {
     return (
         <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4">
             <button
@@ -38,4 +38,4 @@ export function PaginationControls({
             </button>
         </div>
     );
-}
+};

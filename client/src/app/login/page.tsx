@@ -1,7 +1,7 @@
 import { AuthGuard } from "@/components/auth-guard/auth-guard";
 import { LoginForm } from "@/components/login-form/login-form";
 
-export default function LoginPage() {
+const LoginPage = () => {
     return (
         <AuthGuard mode="guest">
             <section className="flex min-h-[calc(100vh-5rem)] items-center justify-center">
@@ -16,4 +16,6 @@ export default function LoginPage() {
             </section>
         </AuthGuard>
     );
-}
+};
+
+export default LoginPage;

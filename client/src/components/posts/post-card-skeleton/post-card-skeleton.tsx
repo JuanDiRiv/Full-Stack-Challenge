@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PostCardSkeleton() {
+export const PostCardSkeleton = () => {
     return (
         <article className="rounded-lg border border-slate-200 bg-white p-4">
             <Skeleton className="h-5 w-3/4" />
@@ -17,4 +17,4 @@ export function PostCardSkeleton() {
             </div>
         </article>
     );
-}
+};

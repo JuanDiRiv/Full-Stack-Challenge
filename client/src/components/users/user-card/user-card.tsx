@@ -9,7 +9,7 @@ type UserCardProps = {
     onSave: () => Promise<void> | void;
 };
 
-export function UserCard({ user, isSaved, onSave }: UserCardProps) {
+export const UserCard = ({ user, isSaved, onSave }: UserCardProps) => {
     return (
         <article className="rounded-lg border border-slate-200 bg-white p-4">
             <div className="flex items-center gap-3">
@@ -49,4 +49,4 @@ export function UserCard({ user, isSaved, onSave }: UserCardProps) {
             </div>
         </article>
     );
-}
+};

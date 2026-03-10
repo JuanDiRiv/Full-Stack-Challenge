@@ -9,15 +9,15 @@ const navItems = [
     { href: "/posts", label: "Posts" },
 ];
 
-function isNavItemActive(pathname: string, href: string): boolean {
+const isNavItemActive = (pathname: string, href: string): boolean => {
     if (href === "/") {
         return pathname === "/";
     }
 
     return pathname === href || pathname.startsWith(`${href}/`);
-}
+};
 
-export function MainNav() {
+export const MainNav = () => {
     const pathname = usePathname();
 
     return (
@@ -35,4 +35,4 @@ export function MainNav() {
             </ul>
         </nav>
     );
-}
+};

@@ -3,7 +3,7 @@ type UsersSearchProps = {
     onChange: (value: string) => void;
 };
 
-export function UsersSearch({ value, onChange }: UsersSearchProps) {
+export const UsersSearch = ({ value, onChange }: UsersSearchProps) => {
     return (
         <section className="rounded-lg border border-slate-200 bg-white p-4">
             <label htmlFor="users-search" className="mb-2 block text-sm font-medium text-slate-700">
@@ -19,4 +19,4 @@ export function UsersSearch({ value, onChange }: UsersSearchProps) {
             />
         </section>
     );
-}
+};

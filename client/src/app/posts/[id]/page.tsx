@@ -10,7 +10,7 @@ import { deletePost, getPostById, getSavedUsers } from "@/lib/api";
 import type { Post } from "@/types/post";
 import type { SavedUser } from "@/types/saved-user";
 
-export default function PostDetailPage() {
+const PostDetailPage = () => {
     const params = useParams<{ id: string }>();
     const router = useRouter();
     const postId = params.id;
@@ -48,7 +48,7 @@ export default function PostDetailPage() {
         }
     }, [postId, loadPost]);
 
-    async function handleDeletePost() {
+    const handleDeletePost = async () => {
         setDeleteError("");
         setIsDeleting(true);
 
@@ -60,7 +60,7 @@ export default function PostDetailPage() {
             setDeleteError(message);
             setIsDeleting(false);
         }
-    }
+    };
 
     const matchedAuthor = post
         ? savedUsers.find((savedUser) => savedUser._id === post.authorUserId)
@@ -171,4 +171,6 @@ export default function PostDetailPage() {
             </section>
         </AuthGuard>
     );
-}
+};
+
+export default PostDetailPage;

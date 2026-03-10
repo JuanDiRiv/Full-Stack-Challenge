@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function UserCardSkeleton() {
+export const UserCardSkeleton = () => {
     return (
         <article className="rounded-lg border border-slate-200 bg-white p-4">
             <div className="flex items-center gap-3">
@@ -24,4 +24,4 @@ export function UserCardSkeleton() {
             </div>
         </article>
     );
-}
+};

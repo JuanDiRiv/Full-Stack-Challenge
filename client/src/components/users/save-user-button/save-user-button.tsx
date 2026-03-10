@@ -8,11 +8,11 @@ type SaveUserButtonProps = {
     onSaved: () => Promise<void> | void;
 };
 
-export function SaveUserButton({ externalId, onSaved }: SaveUserButtonProps) {
+export const SaveUserButton = ({ externalId, onSaved }: SaveUserButtonProps) => {
     const [isSaving, setIsSaving] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    async function handleSave() {
+    const handleSave = async () => {
         setErrorMessage("");
         setIsSaving(true);
 
@@ -25,7 +25,7 @@ export function SaveUserButton({ externalId, onSaved }: SaveUserButtonProps) {
         } finally {
             setIsSaving(false);
         }
-    }
+    };
 
     return (
         <div className="flex flex-col items-end gap-2">
@@ -43,4 +43,4 @@ export function SaveUserButton({ externalId, onSaved }: SaveUserButtonProps) {
             {errorMessage ? <p className="text-xs text-red-700">{errorMessage}</p> : null}
         </div>
     );
-}
+};

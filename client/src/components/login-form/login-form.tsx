@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { loginRequest } from "@/lib/api";
 
-export function LoginForm() {
+export const LoginForm = () => {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
 
-    async function submitLogin() {
+    const submitLogin = async () => {
         setErrorMessage("");
         setIsSubmitting(true);
 
@@ -30,7 +30,7 @@ export function LoginForm() {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
 
     return (
         <form
@@ -87,4 +87,4 @@ export function LoginForm() {
             </button>
         </form>
     );
-}
+};

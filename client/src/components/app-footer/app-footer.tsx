@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 
-export function AppFooter() {
+export const AppFooter = () => {
     const pathname = usePathname();
 
     if (pathname === "/login") {
@@ -33,4 +33,4 @@ export function AppFooter() {
             </div>
         </footer>
     );
-}
+};

@@ -11,7 +11,7 @@ import { getSavedUsers, getUserById } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
 import type { SavedUser } from "@/types/saved-user";
 
-export default function UserDetailPage() {
+const UserDetailPage = () => {
     const params = useParams<{ id: string }>();
     const userId = params.id;
 
@@ -20,17 +20,17 @@ export default function UserDetailPage() {
     const [errorMessage, setErrorMessage] = useState("");
     const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
 
-    async function loadSavedUsers() {
+    const loadSavedUsers = async () => {
         try {
             const response = await getSavedUsers();
             setSavedUsers(response.data || []);
         } catch {
             setSavedUsers([]);
         }
-    }
+    };
 
     useEffect(() => {
-        async function loadUser() {
+        const loadUser = async () => {
             setErrorMessage("");
             setIsLoading(true);
 
@@ -44,7 +44,7 @@ export default function UserDetailPage() {
             } finally {
                 setIsLoading(false);
             }
-        }
+        };
 
         if (userId) {
             void loadUser();
@@ -147,4 +147,6 @@ export default function UserDetailPage() {
             </section>
         </AuthGuard>
     );
-}
+};
+
+export default UserDetailPage;

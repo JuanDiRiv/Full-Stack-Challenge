@@ -9,7 +9,7 @@ type CreatePostFormProps = {
     onCreated: () => Promise<void> | void;
 };
 
-export function CreatePostForm({ onCreated }: CreatePostFormProps) {
+export const CreatePostForm = ({ onCreated }: CreatePostFormProps) => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [authorUserId, setAuthorUserId] = useState("");
@@ -20,7 +20,7 @@ export function CreatePostForm({ onCreated }: CreatePostFormProps) {
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
-        async function loadSavedUsers() {
+        const loadSavedUsers = async () => {
             try {
                 const response = await getSavedUsers();
                 const users = response.data || [];
@@ -34,12 +34,12 @@ export function CreatePostForm({ onCreated }: CreatePostFormProps) {
             } finally {
                 setIsLoadingUsers(false);
             }
-        }
+        };
 
         void loadSavedUsers();
     }, []);
 
-    async function handleCreatePost() {
+    const handleCreatePost = async () => {
         if (savedUsers.length === 0) {
             return;
         }
@@ -70,7 +70,7 @@ export function CreatePostForm({ onCreated }: CreatePostFormProps) {
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
 
     return (
         <section className="rounded-lg border border-slate-200 bg-white p-6">
@@ -154,4 +154,4 @@ export function CreatePostForm({ onCreated }: CreatePostFormProps) {
             ) : null}
         </section>
     );
-}
+};

@@ -10,7 +10,7 @@ import { getSavedUsers, getUsers } from "@/lib/api";
 import type { ReqResUser } from "@/types/reqres-user";
 import type { SavedUser } from "@/types/saved-user";
 
-export default function UsersPage() {
+const UsersPage = () => {
     const [users, setUsers] = useState<ReqResUser[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState("");
@@ -19,7 +19,7 @@ export default function UsersPage() {
     const [searchValue, setSearchValue] = useState("");
     const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
 
-    async function loadUsers(nextPage: number) {
+    const loadUsers = async (nextPage: number) => {
         setErrorMessage("");
         setIsLoading(true);
 
@@ -34,16 +34,16 @@ export default function UsersPage() {
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    async function loadSavedUsers() {
+    const loadSavedUsers = async () => {
         try {
             const response = await getSavedUsers();
             setSavedUsers(response.data || []);
         } catch {
             setSavedUsers([]);
         }
-    }
+    };
 
     useEffect(() => {
         void loadUsers(1);
@@ -119,4 +119,6 @@ export default function UsersPage() {
             </section>
         </AuthGuard>
     );
-}
+};
+
+export default UsersPage;

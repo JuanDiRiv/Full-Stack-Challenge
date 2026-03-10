@@ -1,6 +1,6 @@
 import { featureAreas } from "@/lib/feature-areas";
 
-export function PlannedAreas() {
+export const PlannedAreas = () => {
     return (
         <section className="mt-8 rounded-lg border border-slate-200 bg-white p-6">
             <h2 className="text-lg font-semibold text-slate-900">Planned Areas</h2>
@@ -21,4 +21,4 @@ export function PlannedAreas() {
             </ul>
         </section>
     );
-}
+};

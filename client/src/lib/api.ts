@@ -26,22 +26,22 @@ type BasicApiResponse = {
   message: string;
 };
 
-function getApiBaseUrl(): string {
+const getApiBaseUrl = (): string => {
   return process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000";
-}
+};
 
 const CREDENTIALS_INCLUDE: RequestCredentials = "include";
 const NO_STORE_CACHE: RequestCache = "no-store";
 
-function getJsonHeaders(): HeadersInit {
+const getJsonHeaders = (): HeadersInit => {
   return {
     "Content-Type": "application/json",
   };
-}
+};
 
-async function parseApiResponse<TData>(
+const parseApiResponse = async <TData>(
   httpResponse: Response,
-): Promise<ApiEnvelope<TData>> {
+): Promise<ApiEnvelope<TData>> => {
   const apiResponseBody = (await httpResponse.json()) as ApiEnvelope<TData>;
 
   if (!httpResponse.ok) {
@@ -49,11 +49,11 @@ async function parseApiResponse<TData>(
   }
 
   return apiResponseBody;
-}
+};
 
-export async function loginRequest(
+export const loginRequest = async (
   payload: LoginPayload,
-): Promise<BasicApiResponse> {
+): Promise<BasicApiResponse> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/login`, {
     method: "POST",
     credentials: CREDENTIALS_INCLUDE,
@@ -68,9 +68,9 @@ export async function loginRequest(
   }
 
   return responseBody;
-}
+};
 
-export async function logoutRequest(): Promise<BasicApiResponse> {
+export const logoutRequest = async (): Promise<BasicApiResponse> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/logout`, {
     method: "POST",
     credentials: CREDENTIALS_INCLUDE,
@@ -83,9 +83,9 @@ export async function logoutRequest(): Promise<BasicApiResponse> {
   }
 
   return responseBody;
-}
+};
 
-export async function getSessionStatus(): Promise<SessionStatusResponse> {
+export const getSessionStatus = async (): Promise<SessionStatusResponse> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/auth/session`, {
     method: "GET",
     credentials: CREDENTIALS_INCLUDE,
@@ -99,7 +99,7 @@ export async function getSessionStatus(): Promise<SessionStatusResponse> {
   }
 
   return responseBody;
-}
+};
 
 type RawReqResUser = {
   id: number;
@@ -119,7 +119,7 @@ type RawReqResUsersData = {
   total_pages?: number;
 };
 
-function normalizeReqResUser(user: RawReqResUser): ReqResUser {
+const normalizeReqResUser = (user: RawReqResUser): ReqResUser => {
   return {
     id: user.id,
     email: user.email,
@@ -127,11 +127,11 @@ function normalizeReqResUser(user: RawReqResUser): ReqResUser {
     lastName: user.lastName || user.last_name || "",
     avatar: user.avatar,
   };
-}
+};
 
-export async function getUsers(
+export const getUsers = async (
   page: number,
-): Promise<ApiEnvelope<ReqResUsersPage>> {
+): Promise<ApiEnvelope<ReqResUsersPage>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users?page=${encodeURIComponent(String(page))}`,
     {
@@ -158,11 +158,11 @@ export async function getUsers(
         1,
     },
   };
-}
+};
 
-export async function getUserById(
+export const getUserById = async (
   id: string | number,
-): Promise<ApiEnvelope<ReqResUser>> {
+): Promise<ApiEnvelope<ReqResUser>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users/${encodeURIComponent(id)}`,
     {
@@ -183,11 +183,11 @@ export async function getUserById(
     message: userResponse.message,
     data: normalizeReqResUser(rawUser),
   };
-}
+};
 
-export async function importUserByExternalId(
+export const importUserByExternalId = async (
   id: string | number,
-): Promise<ApiEnvelope<SavedUser>> {
+): Promise<ApiEnvelope<SavedUser>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/users/import/${encodeURIComponent(String(id))}`,
     {
@@ -198,9 +198,9 @@ export async function importUserByExternalId(
   );
 
   return parseApiResponse<SavedUser>(httpResponse);
-}
+};
 
-export async function getSavedUsers(): Promise<ApiEnvelope<SavedUser[]>> {
+export const getSavedUsers = async (): Promise<ApiEnvelope<SavedUser[]>> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/users/saved`, {
     method: "GET",
     credentials: CREDENTIALS_INCLUDE,
@@ -208,11 +208,11 @@ export async function getSavedUsers(): Promise<ApiEnvelope<SavedUser[]>> {
   });
 
   return parseApiResponse<SavedUser[]>(httpResponse);
-}
+};
 
-export async function createPost(
+export const createPost = async (
   payload: CreatePostPayload,
-): Promise<ApiEnvelope<Post>> {
+): Promise<ApiEnvelope<Post>> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "POST",
     credentials: CREDENTIALS_INCLUDE,
@@ -221,9 +221,9 @@ export async function createPost(
   });
 
   return parseApiResponse<Post>(httpResponse);
-}
+};
 
-export async function getPosts(): Promise<ApiEnvelope<Post[]>> {
+export const getPosts = async (): Promise<ApiEnvelope<Post[]>> => {
   const httpResponse = await fetch(`${getApiBaseUrl()}/api/posts`, {
     method: "GET",
     credentials: CREDENTIALS_INCLUDE,
@@ -231,9 +231,9 @@ export async function getPosts(): Promise<ApiEnvelope<Post[]>> {
   });
 
   return parseApiResponse<Post[]>(httpResponse);
-}
+};
 
-export async function getPostById(id: string): Promise<ApiEnvelope<Post>> {
+export const getPostById = async (id: string): Promise<ApiEnvelope<Post>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
@@ -244,12 +244,12 @@ export async function getPostById(id: string): Promise<ApiEnvelope<Post>> {
   );
 
   return parseApiResponse<Post>(httpResponse);
-}
+};
 
-export async function updatePost(
+export const updatePost = async (
   id: string,
   payload: UpdatePostPayload,
-): Promise<ApiEnvelope<Post>> {
+): Promise<ApiEnvelope<Post>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
@@ -261,9 +261,9 @@ export async function updatePost(
   );
 
   return parseApiResponse<Post>(httpResponse);
-}
+};
 
-export async function deletePost(id: string): Promise<ApiEnvelope<null>> {
+export const deletePost = async (id: string): Promise<ApiEnvelope<null>> => {
   const httpResponse = await fetch(
     `${getApiBaseUrl()}/api/posts/${encodeURIComponent(id)}`,
     {
@@ -273,4 +273,4 @@ export async function deletePost(id: string): Promise<ApiEnvelope<null>> {
   );
 
   return parseApiResponse<null>(httpResponse);
-}
+};

@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { MainNav } from "@/components/main-nav/main-nav";
 import { LogoutButton } from "@/components/logout-button/logout-button";
 
-export function AppHeader() {
+export const AppHeader = () => {
     const pathname = usePathname();
 
     if (pathname === "/login") {
@@ -28,4 +28,4 @@ export function AppHeader() {
             </div>
         </header>
     );
-}
+};

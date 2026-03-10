@@ -6,7 +6,7 @@ type NavLinkProps = {
     isActive: boolean;
 };
 
-export function NavLink({ href, label, isActive }: NavLinkProps) {
+export const NavLink = ({ href, label, isActive }: NavLinkProps) => {
     return (
         <Link
             href={href}
@@ -19,4 +19,4 @@ export function NavLink({ href, label, isActive }: NavLinkProps) {
             {label}
         </Link>
     );
-}
+};

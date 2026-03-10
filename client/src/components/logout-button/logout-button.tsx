@@ -3,18 +3,17 @@
 import { useRouter } from "next/navigation";
 import { logoutRequest } from "@/lib/api";
 
-export function LogoutButton() {
+export const LogoutButton = () => {
     const router = useRouter();
 
-    async function handleLogout() {
+    const handleLogout = async () => {
         try {
             await logoutRequest();
         } catch {
-            // Always continue to login screen even if logout request fails.
         }
 
         router.replace("/login");
-    }
+    };
 
     return (
         <button
@@ -25,4 +24,4 @@ export function LogoutButton() {
             Logout
         </button>
     );
-}
+};

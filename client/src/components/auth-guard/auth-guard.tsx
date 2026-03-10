@@ -12,13 +12,13 @@ type AuthGuardProps = {
     children: ReactNode;
 };
 
-export function AuthGuard({ mode, children }: AuthGuardProps) {
+export const AuthGuard = ({ mode, children }: AuthGuardProps) => {
     const router = useRouter();
     const [isCheckingAuth, setIsCheckingAuth] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
-        async function checkSessionStatus() {
+        const checkSessionStatus = async () => {
             try {
                 const sessionStatusResponse = await getSessionStatus();
                 setIsAuthenticated(sessionStatusResponse.data.authenticated);
@@ -27,7 +27,7 @@ export function AuthGuard({ mode, children }: AuthGuardProps) {
             } finally {
                 setIsCheckingAuth(false);
             }
-        }
+        };
 
         void checkSessionStatus();
     }, []);
@@ -69,4 +69,4 @@ export function AuthGuard({ mode, children }: AuthGuardProps) {
     }
 
     return <>{children}</>;
-}
+};

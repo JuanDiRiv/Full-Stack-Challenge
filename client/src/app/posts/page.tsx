@@ -9,7 +9,7 @@ import { getPosts, getSavedUsers } from "@/lib/api";
 import type { Post } from "@/types/post";
 import type { SavedUser } from "@/types/saved-user";
 
-export default function PostsPage() {
+const PostsPage = () => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [savedUsers, setSavedUsers] = useState<SavedUser[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -72,4 +72,6 @@ export default function PostsPage() {
             </section>
         </AuthGuard>
     );
-}
+};
+
+export default PostsPage;

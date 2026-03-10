@@ -11,14 +11,14 @@ type UsersListProps = {
     onSaveUser: () => Promise<void> | void;
 };
 
-export function UsersList({
+export const UsersList = ({
     users,
     isLoading,
     errorMessage,
     emptyMessage = "No users found",
     savedExternalIds,
     onSaveUser,
-}: UsersListProps) {
+}: UsersListProps) => {
     if (isLoading) {
         return (
             <section>
@@ -64,4 +64,4 @@ export function UsersList({
             </div>
         </section>
     );
-}
+};
