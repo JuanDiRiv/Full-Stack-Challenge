@@ -231,6 +231,17 @@ npm test
 - Deployed frontend: `https://full-stack-challenge-sage.vercel.app`
 - ReqRes is used for authentication and external users data.
 
+### Test User (ReqRes)
+
+Use the following credentials to test login in the app:
+
+```json
+{
+  "email": "eve.holt@reqres.in",
+  "password": "pistol"
+}
+```
+
 ## Notes / Trade-offs
 
 - Authentication is cookie-based (HttpOnly cookie managed by backend), not localStorage-based token persistence.
